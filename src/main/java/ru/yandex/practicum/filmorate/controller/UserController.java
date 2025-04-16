@@ -1,14 +1,20 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
+@Validated
 public class UserController {
 
     private final Map<Long, User> users = new HashMap<>();
@@ -19,15 +25,28 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(User user) {
-
+    public User addUser(@Valid @RequestBody User user) {
+        user.setId(getNextId());
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+        users.put(user.getId(), user);
+        log.debug("Пользователь {} успешно добален", user.getName());
         return user;
     }
 
     @PutMapping
-    public User updateUser(User newUser) {
-
-        return newUser;
+    public User updateUser(@Valid @RequestBody User user) {
+        if (users.containsKey(user.getId())) {
+            if (user.getName() == null || user.getName().isBlank()) {
+                user.setName(user.getLogin());
+            }
+            users.put(user.getId(), user);
+            log.debug("Пользователь с именем {} успешно обновлен", user.getName());
+            return user;
+        }
+        log.debug("Пользователь с ID: {} не найден", user.getId());
+        throw new NotFoundException("Пользователь с ID: " + user.getId() + " не найден");
     }
 
     private long getNextId() {
