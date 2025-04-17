@@ -39,14 +39,6 @@ class FilmControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionForNegativeDuration() {
-        film.setDuration(-120L);
-        ValidationException ex = assertThrows(ValidationException.class,
-                () -> filmController.addFilm(film));
-        assertEquals("Продолжительность фильма не может быть отрицательной", ex.getMessage());
-    }
-
-    @Test
     void shouldReturnAllFilms() {
         filmController.addFilm(film);
         Collection<Film> films = filmController.getFilms();

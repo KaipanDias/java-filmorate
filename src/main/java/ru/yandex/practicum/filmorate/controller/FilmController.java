@@ -18,8 +18,9 @@ import java.util.Map;
 @RequestMapping("/films")
 @Validated
 public class FilmController {
-
+    private long filmId = 0;
     private final Map<Long, Film> films = new HashMap<>();
+    private final static LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @GetMapping
     public Collection<Film> getFilms() {
@@ -28,13 +29,10 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             throw new ValidationException("Год выпуска фильма не может быть раньше 28.12.1895");
         }
-        if (film.getDuration() != null && film.getDuration() < 0) {
-            throw new ValidationException("Продолжительность фильма не может быть отрицательной");
-        }
-        film.setId(getNextId());
+        film.setId(++filmId);
         films.put(film.getId(), film);
         log.debug("Фильм {} успешно добавлен", film.getName());
         return film;
@@ -42,11 +40,8 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             throw new ValidationException("Год выпуска фильма не может быть раньше 28.12.1895");
-        }
-        if (film.getDuration() != null && film.getDuration() < 0) {
-            throw new ValidationException("Продолжительность фильма не может быть отрицательной");
         }
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
@@ -56,14 +51,5 @@ public class FilmController {
 
         log.debug("Фильм с ID {} не найден", film.getId());
         throw new NotFoundException("Фильм с ID:" + film.getId() + " не найден");
-    }
-
-    private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
     }
 }

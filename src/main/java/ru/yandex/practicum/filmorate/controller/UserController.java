@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping("/users")
 @Validated
 public class UserController {
-
+    private long userId = 0;
     private final Map<Long, User> users = new HashMap<>();
 
     @GetMapping
@@ -26,7 +26,7 @@ public class UserController {
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
-        user.setId(getNextId());
+        user.setId(++userId);
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
@@ -47,14 +47,5 @@ public class UserController {
         }
         log.debug("Пользователь с ID: {} не найден", user.getId());
         throw new NotFoundException("Пользователь с ID: " + user.getId() + " не найден");
-    }
-
-    private long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
     }
 }
