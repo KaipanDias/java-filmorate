@@ -20,7 +20,7 @@ import java.util.Map;
 public class FilmController {
     private long filmId = 0;
     private final Map<Long, Film> films = new HashMap<>();
-    private final static LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @GetMapping
     public Collection<Film> getFilms() {
