@@ -31,7 +31,7 @@ public class FilmController {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Год выпуска фильма не может быть раньше 28.12.1895");
         }
-        if (film.getDuration().isNegative()) {
+        if (film.getDuration() != null && film.getDuration()<0) {
             throw new ValidationException("Продолжительность фильма не может быть отрицательной");
         }
         film.setId(getNextId());
@@ -45,7 +45,7 @@ public class FilmController {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Год выпуска фильма не может быть раньше 28.12.1895");
         }
-        if (film.getDuration().isNegative()) {
+        if (film.getDuration() != null && film.getDuration()<0) {
             throw new ValidationException("Продолжительность фильма не может быть отрицательной");
         }
         if (films.containsKey(film.getId())) {

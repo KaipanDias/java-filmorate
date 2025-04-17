@@ -20,5 +20,5 @@ public class Film {
     @Size(max = 200, message = "Описание не должно превышать 200 символов")
     private String description;
     private LocalDate releaseDate;
-    private Duration duration;
+    private Long duration;
 }

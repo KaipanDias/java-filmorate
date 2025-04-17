@@ -21,7 +21,7 @@ class FilmControllerTest {
     @BeforeEach
     void setUp() {
         filmController = new FilmController();
-        film = new Film(1L, "The Matrix", "A sci-fi classic.", LocalDate.of(1999, 3, 31), Duration.ofMinutes(136));
+        film = new Film(1L, "The Matrix", "A sci-fi classic.", LocalDate.of(1999, 3, 31), 136L);
     }
 
     @Test
@@ -41,7 +41,7 @@ class FilmControllerTest {
 
     @Test
     void shouldThrowValidationExceptionForNegativeDuration() {
-        film.setDuration(Duration.ofMinutes(-120));
+        film.setDuration(-120L);
         ValidationException ex = assertThrows(ValidationException.class,
                 () -> filmController.addFilm(film));
         assertEquals("Продолжительность фильма не может быть отрицательной", ex.getMessage());
