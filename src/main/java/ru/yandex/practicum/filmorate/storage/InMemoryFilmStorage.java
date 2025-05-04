@@ -18,13 +18,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     private long filmId = 0;
     private final Map<Long, Film> films = new HashMap<>();
-    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @Override
     public Film addFilm(Film film) {
-        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-            throw new ValidationException("Год выпуска фильма не может быть раньше 28.12.1895");
-        }
         film.setId(++filmId);
         films.put(film.getId(), film);
         log.debug("Фильм {} успешно добавлен", film.getName());
@@ -41,9 +37,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-            throw new ValidationException("Год выпуска фильма не может быть раньше 28.12.1895");
-        }
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
             log.debug("Фильм {} успешно обновлен", film.getName());

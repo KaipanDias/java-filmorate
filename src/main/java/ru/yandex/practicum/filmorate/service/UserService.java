@@ -18,10 +18,18 @@ public class UserService {
     private final UserStorage userStorage;
 
     public User addUser(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         return userStorage.addUser(user);
     }
 
     public User updateUser(User user) {
+        if (userStorage.getUserById(user.getId()) != null){
+            if (user.getName() == null || user.getName().isBlank()) {
+                user.setName(user.getLogin());
+            }
+        }
         return userStorage.updateUser(user);
     }
 
@@ -52,28 +60,17 @@ public class UserService {
     public List<User> getUserFriends(Long id) {
         Set<Long> userFriendsIds = userStorage.getUserById(id).getFriends();
 
-        if (userFriendsIds == null || userFriendsIds.isEmpty()) {
-            return new ArrayList<>();
-        }
-
         return userFriendsIds.stream()
                 .map(userStorage::getUserById)
-                .filter(Objects::nonNull)
                 .toList();
     }
 
     public List<User> getMutualFriends(Long userId, Long otherUserId) {
         Set<Long> mutualFriends = userStorage.getUserById(userId).getFriends();
-
-        if (mutualFriends == null || mutualFriends.isEmpty()) {
-            return new ArrayList<>();
-        }
-
         mutualFriends.retainAll(userStorage.getUserById(otherUserId).getFriends());
 
         return mutualFriends.stream()
                 .map(userStorage::getUserById)
-                .filter(Objects::nonNull)
                 .toList();
     }
 }
