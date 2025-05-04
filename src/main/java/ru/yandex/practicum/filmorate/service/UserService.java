@@ -23,7 +23,7 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        if (userStorage.getUserById(user.getId()) != null){
+        if (userStorage.getUserById(user.getId()) != null) {
             if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(user.getLogin());
             }
