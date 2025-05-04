@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Component
 @Slf4j
-public class InMemoryUserStorage implements UserStorage{
+public class InMemoryUserStorage implements UserStorage {
 
     private long userId = 0;
     private final Map<Long, User> users = new HashMap<>();
@@ -30,8 +30,7 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User getUserById(Long id) {
-        if(!users.containsKey(id)){
-            log.debug("Пользователь с ID: {} не найден", id);
+        if (!users.containsKey(id)) {
             throw new NotFoundException("Пользователь с ID: " + id + " не найден");
         }
         return users.get(id);
