@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
