@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -15,11 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserControllerTest {
 
     private UserStorage userStorage;
+    private UserService userService;
     private User user;
 
     @BeforeEach
     void setUp() {
         userStorage = new InMemoryUserStorage();
+        userService = new UserService(userStorage);
         user = new User(1L, "neo@matrix.com", "neo", "Neo", LocalDate.of(1990, 3, 11));
     }
 
@@ -33,14 +36,14 @@ class UserControllerTest {
     @Test
     void shouldSetNameToLoginIfNameIsNull() {
         user.setName(null);
-        User added = userStorage.addUser(user);
+        User added = userService.addUser(user);
         assertEquals("neo", added.getName());
     }
 
     @Test
     void shouldSetNameToLoginIfNameIsBlank() {
         user.setName("   ");
-        User added = userStorage.addUser(user);
+        User added = userService.addUser(user);
         assertEquals("neo", added.getName());
     }
 

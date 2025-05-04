@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -16,11 +19,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilmControllerTest {
 
     private FilmStorage filmStorage;
+    private FilmService filmService;
+    private UserStorage userStorage;
     private Film film;
 
     @BeforeEach
     void setUp() {
         filmStorage = new InMemoryFilmStorage();
+        userStorage = new InMemoryUserStorage();
+        filmService = new FilmService(filmStorage, userStorage);
         film = new Film(1L, "The Matrix", "A sci-fi classic.", LocalDate.of(1999, 3, 31), 136L);
     }
 
@@ -35,7 +42,7 @@ class FilmControllerTest {
     void shouldThrowValidationExceptionForTooOldDate() {
         film.setReleaseDate(LocalDate.of(1800, 1, 1));
         ValidationException ex = assertThrows(ValidationException.class,
-                () -> filmStorage.addFilm(film));
+                () -> filmService.addFilm(film));
         assertEquals("Год выпуска фильма не может быть раньше 28.12.1895", ex.getMessage());
     }
 
