@@ -2,9 +2,11 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -13,18 +15,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
 
-    private UserController userController;
+    private UserStorage userStorage;
+    private UserService userService;
     private User user;
 
     @BeforeEach
     void setUp() {
-        userController = new UserController();
+        userStorage = new InMemoryUserStorage();
+        userService = new UserService(userStorage);
         user = new User(1L, "neo@matrix.com", "neo", "Neo", LocalDate.of(1990, 3, 11));
     }
 
     @Test
     void shouldAdduser() {
-        User added = userController.addUser(user);
+        User added = userStorage.addUser(user);
         assertNotNull(added.getId());
         assertEquals("Neo", added.getName());
     }
@@ -32,22 +36,22 @@ class UserControllerTest {
     @Test
     void shouldSetNameToLoginIfNameIsNull() {
         user.setName(null);
-        User added = userController.addUser(user);
+        User added = userService.addUser(user);
         assertEquals("neo", added.getName());
     }
 
     @Test
     void shouldSetNameToLoginIfNameIsBlank() {
         user.setName("   ");
-        User added = userController.addUser(user);
+        User added = userService.addUser(user);
         assertEquals("neo", added.getName());
     }
 
     @Test
     void shouldUpdateExistingUser() {
-        User added = userController.addUser(user);
+        User added = userStorage.addUser(user);
         added.setName("Thomas Anderson");
-        User updated = userController.updateUser(added);
+        User updated = userStorage.updateUser(added);
 
         assertEquals("Thomas Anderson", updated.getName());
         assertEquals(added.getId(), updated.getId());
@@ -57,14 +61,14 @@ class UserControllerTest {
     void shouldThrowNotFoundWhenUpdatingNonExistentUser() {
         user.setId(999L); // Несуществующий ID
         NotFoundException ex = assertThrows(NotFoundException.class,
-                () -> userController.updateUser(user));
+                () -> userStorage.updateUser(user));
         assertEquals("Пользователь с ID: 999 не найден", ex.getMessage());
     }
 
     @Test
     void shouldReturnAllUsers() {
-        userController.addUser(user);
-        Collection<User> users = userController.getUsers();
+        userStorage.addUser(user);
+        Collection<User> users = userStorage.getAllUsers();
         assertEquals(1, users.size());
     }
 }
